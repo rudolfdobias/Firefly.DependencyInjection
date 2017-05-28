@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyTitle>Firefly.DependencyInjection</AssemblyTitle>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <Authors>Rudolf Dobias et al.</Authors>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <OutputType>Library</OutputType>
+    <DebugType>portable</DebugType>
+    <AssemblyName>Firefly.DependencyInjection</AssemblyName>
+    <PackageId>Firefly.DependencyInjection</PackageId>
+    <PackageTags>firefly .net core api DI</PackageTags>
+    <PackageVersion>1.0.0</PackageVersion>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+    <LangVersion>7</LangVersion>
+    <Owners>Rudolf Dobias</Owners>
+    <PackageProjectUrl>https://github.com/rudolfdobias/Firefly.DependencyInjection</PackageProjectUrl>
+    <Summary>Attribute driven DI registration for .NET core applications</Summary>
+    <Title>Firefly.DependencyInjection</Title>
+    <Description>Attribute driven DI registration for .NET core applications</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <DocumentationFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Attributes" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.0"></PackageReference>
+  </ItemGroup>
+</Project>
