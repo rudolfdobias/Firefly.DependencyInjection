@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Firefly.DependencyInjection.svg)](https://www.nuget.org/packages/Firefly.DependencyInjection)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
-Attribute driven class DI registration for C# .NET Core applications.
+Simple attribute driven class DI registration for .NET Core applications.
 
 ## Installation
 
@@ -14,7 +14,20 @@ bash$ dotnet add package Firefly.DependencyInjection
 
 Windows
 ```
-Install-Package Firefly.DependencyInjection
+PM> Install-Package Firefly.DependencyInjection
+```
+
+### How to make it work
+
+Startup.cs
+```cs
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+    services.UseInlineDiRegistration();
+    ...
+}
+
 ```
 
 ### Basic usage
