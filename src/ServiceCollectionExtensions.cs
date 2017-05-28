@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Firefly.DependencyInjection
@@ -18,7 +19,6 @@ namespace Firefly.DependencyInjection
             {
                 assembly = Assembly.GetEntryAssembly();
             }
-
             foreach (var type in assembly.GetTypes())
             {
                 var typeInfo = type.GetTypeInfo();

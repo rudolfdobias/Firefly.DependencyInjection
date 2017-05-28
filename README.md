@@ -19,7 +19,7 @@ PM> Install-Package Firefly.DependencyInjection
 
 ### How to make it work
 
-Startup.cs
+At Startup.cs
 ```cs
 public void ConfigureServices(IServiceCollection services)
 {
@@ -43,16 +43,13 @@ namespace Pub.Services {
     } 
 }
 
-```
-
-```cs
 
 namespace Pub.Controllers {
 
     public class OrdersController {
         
         public OrdersController(BartenderService bartenderService){
-            var beer = bartenderService.GiveMeBeer();
+            var beer = bartenderService.GiveMeBeer(); // here we go
         }
     } 
 }
@@ -72,16 +69,13 @@ namespace Pub.Services {
     } 
 }
 
-```
-
-```cs
 
 namespace Pub.Controllers {
 
     public class OrdersController {
         
         public OrdersController(IBartenderService bartenderService){
-            var beer = bartenderService.GiveMeBeer();
+            var beer = bartenderService.GiveMeBeer(); // here we go
         }
     } 
 }
@@ -111,3 +105,11 @@ namespace Pub.Controllers {
 public class MyService : IService {}
 
 ```
+
+### Advanced
+
+ Enabling registration for custom assembly:
+ ```cs
+ services.UseInlineDiRegistration(Assembly.Load(new AssemblyName("My.Custom.Assembly")));
+
+ ```
