@@ -1,9 +1,26 @@
-# Firefly.DependencyInjection
+# Attribute driven DI registration
+> A Firefly.DependencyInjection package for [ASP].NET Core 1.1+
 
 [![NuGet](https://img.shields.io/nuget/v/Firefly.DependencyInjection.svg)](https://www.nuget.org/packages/Firefly.DependencyInjection)
+[![NuGet](https://img.shields.io/nuget/dt/Firefly.DependencyInjection.svg)](https://www.nuget.org/packages/Firefly.DependencyInjection)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
-Simple attribute driven class DI registration for .NET Core applications.
+ - Register you services and providers to DI with single attribute.
+ - Supports singleton, scoped or transient lifetimes
+ - Supports interface substitution and aliasing
+ - It's cool syntax sugar.
+
+ ```cs
+
+namespace Pub.Services {
+
+    [RegisterScoped]
+    public class BartenderService {
+        
+        public Beer GiveMeBeer() {...}
+    } 
+}
+```
 
 ## Installation
 
@@ -104,6 +121,10 @@ namespace Pub.Controllers {
 [RegisterScoped(Type = typeof(IMyService))]
 public class MyService : IService {}
 
+// Lifetime by alias
+[RegisterScoped]
+[RegisterTransient(Type = typeof(IMyServiceTrasient))]
+public class MyService : IService {}
 ```
 
 ### Advanced
