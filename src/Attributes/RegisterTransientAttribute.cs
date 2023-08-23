@@ -16,6 +16,7 @@ namespace Firefly.DependencyInjection
         /// <inheritdoc />
         public override void Register(IServiceCollection services, Type type)
         {
+            Console.Out.WriteLine($"Registering {type} as {Type}");
             if (Type != null)
             {
                 services.TryAdd(ServiceDescriptor.Transient(Type, type));

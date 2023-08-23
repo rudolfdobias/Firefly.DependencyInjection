@@ -13,7 +13,22 @@ namespace Firefly.DependencyInjection.Tests
             sc.UseInlineDiRegistration(Assembly.Load(new AssemblyName("Firefly.DependencyInjection.Tests")));
 
             var provider = sc.BuildServiceProvider();
+            TestRegistration(provider);
+        }
+        
+        [Fact]
+        public void TestNamespaceLoad()
+        {
+            var sc = new ServiceCollection();
+            sc.UseInlineDiRegistrationForNamespace(nameof(Firefly));
 
+            var provider = sc.BuildServiceProvider();
+            TestRegistration(provider);
+        }
+
+        
+        private void TestRegistration(ServiceProvider provider)
+        {
             var s1 = provider.GetService<MyService>();
             var s1Singleton = provider.GetService<MyServiceSingleton>();
             var s2 = provider.GetService<IMyService>();
