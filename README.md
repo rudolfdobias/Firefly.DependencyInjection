@@ -25,6 +25,14 @@ public class MyServiceConsumer(){
 }
 ```
 
+## Features
+
+ - Really simple Service Registration with single attribute
+ - All service lifetimes supported, of course
+ - Binding interface to one or more implementations
+ - Select which assemblies will be scanned for auto-registration
+ - Possibility to select a single i-face implementation of many based on your custom logic
+
 ## Installation
 
 Linux/OSX
