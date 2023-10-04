@@ -6,9 +6,6 @@
 
 ---
 
-> Register your services into the `ServiceCollection` with single attribute
-> without writing kilometers of `services.AddScoped(...)` entries.
-
 ```csharp
 // Declaration
 [RegisterScoped(Type = typeof(IMyService))]
@@ -27,7 +24,7 @@ public class MyServiceConsumer(){
 
 ## Features
 
- - Really simple Service Registration with single attribute
+ - Simple and fast service registration with single attribute
  - All service lifetimes supported, of course
  - Binding interface to one or more implementations
  - Select which assemblies will be scanned for auto-registration
