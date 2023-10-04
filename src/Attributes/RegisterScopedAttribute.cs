@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Firefly.DependencyInjection
 {
@@ -10,18 +9,6 @@ namespace Firefly.DependencyInjection
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class RegisterScopedAttribute : DiRegistrationAttribute
     {
-        /// <inheritdoc />
-        public override Type Type { get; set; }
-
-        /// <inheritdoc />
-        public override void Register(IServiceCollection services, Type type)
-        {
-            Console.Out.WriteLine($"Registering {type} as {Type}");
-            if (Type != null)
-            {
-                services.TryAdd(ServiceDescriptor.Scoped(Type, type));
-            }
-            services.TryAdd(ServiceDescriptor.Scoped(type, type));
-        }
+        internal override ServiceLifetime Lifetime => ServiceLifetime.Scoped;
     }
 }

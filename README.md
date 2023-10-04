@@ -1,136 +1,181 @@
-# Attribute driven DI registration
-> A Firefly.DependencyInjection package for [ASP].NET Core 1.1+
+# Attribute-driven Service Registration
 
 [![NuGet](https://img.shields.io/nuget/v/Firefly.DependencyInjection.svg)](https://www.nuget.org/packages/Firefly.DependencyInjection)
 [![NuGet](https://img.shields.io/nuget/dt/Firefly.DependencyInjection.svg)](https://www.nuget.org/packages/Firefly.DependencyInjection)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
- - Register you services and providers to DI with single attribute.
- - Supports singleton, scoped or transient lifetimes
- - Supports interface substitution and aliasing
- - It's cool syntax sugar.
+---
 
- ```cs
+> Register your services into the `ServiceCollection` with single attribute
+> without writing kilometers of `services.AddScoped(...)` entries.
 
-namespace Pub.Services {
+```csharp
+// Declaration
+[RegisterScoped(Type = typeof(IMyService))]
+public class MyServiceImplementation : IMyService
+{}
 
-    [RegisterScoped]
-    public class BartenderService {
-        
-        public Beer GiveMeBeer() {...}
-    } 
+// Consumer
+[RegisterScoped]
+public class MyServiceConsumer(){
+    public MyServiceConsumer(IMyService myService)
+    {
+        ...
+    }
 }
 ```
 
 ## Installation
 
 Linux/OSX
-```
-bash$ dotnet add package Firefly.DependencyInjection
+```shell
+dotnet add package Firefly.DependencyInjection
 ```
 
 Windows
-```
-PM> Install-Package Firefly.DependencyInjection
+```shell
+Install-Package Firefly.DependencyInjection
 ```
 
-### How to make it work
+.csproj
+```xml
+<PackageReference Include="Firefly.DependencyInjection" />
+```
 
-At Startup.cs
+## Basic Setup
+
+During application startup, find a `IServiceCollection` instance and call `SetupFireflyServiceRegistration()`.
+
+The location depends on your [Hosting Model](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0):
+
+#### WebApplicationBuilder
 ```cs
-public void ConfigureServices(IServiceCollection services)
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.SetupFireflyServiceRegistration();
+```
+#### Older Startup.cs
+```csharp
+public virtual void ConfigureServices(IServiceCollection services)
 {
-    ...
-    services.UseInlineDiRegistration();
-    ...
+    services.SetupFireflyServiceRegistration();
 }
-
 ```
+#### Manually created ServiceCollction 
+```csharp
+var sc = new ServiceCollection()
+sc.SetupFireflyServiceRegistration();
+```
+---
 
-### Basic usage
+## Usage
+
+### Service Lifetimes
 
 ```cs
+// All three lifetimes are expressed by attributes
 
-namespace Pub.Services {
+[RegisterTransient]
+public class MyTransientService {}
 
-    [RegisterScoped]
-    public class BartenderService {
-        
-        public Beer GiveMeBeer() {...}
-    } 
-}
+[RegisterSingleton]
+public class MyScopedService {}
 
-
-namespace Pub.Controllers {
-
-    public class OrdersController {
-        
-        public OrdersController(BartenderService bartenderService){
-            var beer = bartenderService.GiveMeBeer(); // here we go
-        }
-    } 
-}
-
+[RegisterScoped]
+public class MyScopedService {}
 ```
 
 ### Using interfaces
 
-```cs
-
-namespace Pub.Services {
-
-    [RegisterScoped(Type = typeof(IBartenderService))]
-    public class BartenderService : IBartenderService{
-        
-        public Beer GiveMeBeer() {...}
-    } 
-}
-
-
-namespace Pub.Controllers {
-
-    public class OrdersController {
-        
-        public OrdersController(IBartenderService bartenderService){
-            var beer = bartenderService.GiveMeBeer(); // here we go
-        }
-    } 
-}
-
-```
-
-### Possibilities
-
-```cs
-
-// Registers class as a singleton (one instance forever)
-[RegisterSingleton]
-
-// Registers class with request scoped lifetime (one instance per request)
-[RegisterScoped]
-
-// Registers class with transient lifetime (creates instance with every single call)
-[RegisterTransient]
-
-// Type assignment works for all of them
-[RegisterScoped(Type = typeof(IMyInterface))]
-[RegisterScoped(Type = typeof(MyParentBaseType))]
-
-// Allows multiple identifiers
-[RegisterScoped]
+```csharp
+// Declaration
 [RegisterScoped(Type = typeof(IMyService))]
-public class MyService : IService {}
+public class MyServiceImplementation : IMyService
+{}
 
-// Lifetime by alias
+// Consumer
 [RegisterScoped]
-[RegisterTransient(Type = typeof(IMyServiceTrasient))]
-public class MyService : IService {}
+public class MyServiceConsumer(){
+    public MyServiceConsumer(IMyService myService)
+    {
+        ...
+    }
+}
 ```
 
-### Advanced
+### Multiple implementations of an interface
 
- Enabling registration for custom assembly:
- ```cs
- services.UseInlineDiRegistration(Assembly.Load(new AssemblyName("My.Custom.Assembly")));
+```cs
+[RegisterScoped(Type = typeof(IMyService))] 
+public class MyServiceA : IMyService {} // Variant A
 
- ```
+[RegisterScoped(Type = typeof(IMyService))] 
+public class MyServiceB : IMyService {} // Variant B
+
+[RegisterScoped]
+public class Consumer 
+{
+    // Services will be injected the same way as you're used to.
+    public Consumer(ICollection<IMyService> myInstances){}
+}
+```
+
+### Picking single implementation of an interface from many
+
+There can be a situation where you need to choose an implementation at the runtime. 
+This is an example of choosing an filesystem provider based on a string during the application startup.
+
+Let's have two different impl. of a `IFileProvider` interface.
+```csharp
+// Implementation A
+[RegisterScoped(Type = typeof(IFileProvider))]
+public class BlobFileProvider : IFileProvider {} 
+
+// Implementation B
+[RegisterScoped(Type = typeof(IFileProvider))]
+public class LocalFileProvider : IFileProvider {}
+```
+
+Application startup:
+```csharp
+var useLocalFiles = true;
+
+services.SetupFireflyServiceRegistration(builder => {
+    if (useLocalFiles)
+        builder.PickSingleImplementation<IFileProvider>(typeof(LocalFileProvider));
+    else
+        builder.PickSingleImplementation<IFileProvider>(typeof(BlobFileProvider));
+});
+```
+
+The consuming service:
+```csharp
+public class FilesystemConsumer {
+    public FilesystemConsumer(IFileProvider provider){
+        // provider will LocalFileProvider
+    }
+}
+```
+
+You may also use another two overrides that allow you to pass the Types via Type Parameters or via Type function argument.
+```csharp
+// From DiRegistrationBuilder: 
+public DiRegistrationBuilder PickSingleImplementation(Type interfaceType, Type concreteType);
+public DiRegistrationBuilder PickSingleImplementation<TInterface>(Type concreteType);
+public DiRegistrationBuilder PickSingleImplementation<TInterface, TConcrete>()
+```
+
+---
+
+### Registering services from other Assemblies
+
+It's fully possible to include another assembly. All these assemblies will be scanned for `[Register*]` attributes.
+#### ⚠ Referencing an assembly is needed if you want to register services from another project in your solution.
+
+```csharp
+services.SetupFireflyServiceRegistration(builder => {
+    builder.UseAssembly("Example.Assembly.Name"); // Locate assembly by string
+    builder.UseAssembly(Assembly.GetEntryAssembly()); // Specify assembly by the Assembly type and pass anything you need.
+});
+```
+
+

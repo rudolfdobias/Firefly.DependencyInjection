@@ -3,12 +3,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Firefly.DependencyInjection
 {
-    public abstract class DiRegistrationAttribute : Attribute, IDiRegistrationAttribute
+    public abstract class DiRegistrationAttribute : Attribute
     {
-        /// <inheritdoc />
-        public abstract Type Type { get; set; }
+        /// <summary>
+        /// Type used in DI Registration (Interface type) 
+        /// </summary>
+        public virtual Type? Type { get; set; }
 
-        /// <inheritdoc />
-        public abstract void Register(IServiceCollection services, Type type);
+        /// <summary>
+        /// Lifetime of a service
+        /// </summary>
+        internal abstract ServiceLifetime Lifetime { get; }
     }
 }
