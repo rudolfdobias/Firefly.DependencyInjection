@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyTitle>Firefly.DependencyInjection</AssemblyTitle>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
     <Authors>Rudolf Dobias</Authors>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -10,7 +10,7 @@
     <AssemblyName>Firefly.DependencyInjection</AssemblyName>
     <PackageId>Firefly.DependencyInjection</PackageId>
     <PackageTags>firefly .net core serviceCollection dependency injection</PackageTags>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.0.1</PackageVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
