@@ -32,7 +32,7 @@ internal class Binder
 						if (type != implType)
 							continue;
 					}
-					RegistrationEntries.Add(new RegistrationEntry(type, a.Lifetime, a.Type));
+					RegistrationEntries.Add(new RegistrationEntry(type, a.Lifetime, a.Type, builder.RegisterConcreteTypes));
 				}	
 			}
 		}
@@ -56,8 +56,9 @@ internal class Binder
 			// If interface type (outer type) has been specified, use it for registration
 			if (binding.OuterType != null)
 				_serviceCollection.Add(new ServiceDescriptor(binding.OuterType, binding.ObjectType, binding.Lifetime));
-			// If not, the service will be registered by its own type
-			else
+			
+			// If it has no interface or it has been turned on, the service will be registered by its own type.
+			if (binding.OuterType == null || binding.RegisterConcreteTypes)
 				_serviceCollection.Add(new ServiceDescriptor(binding.ObjectType, binding.ObjectType, binding.Lifetime));
 		}	
 	}

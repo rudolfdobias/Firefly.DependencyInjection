@@ -27,7 +27,7 @@ namespace Firefly.DependencyInjection.Tests
 			});
 
 			var provider = sc.BuildServiceProvider();
-			TestBasicRegistration(provider);
+			AssertBasicRegistration(provider);
 
 			// Test multiple instances under interface
 			var impls = provider.GetServices<IMultipleServiceInterface>();
@@ -57,6 +57,13 @@ namespace Firefly.DependencyInjection.Tests
 			Assert.NotEqual(scopedInstA, scopedInstB); // Scoped must differ
 			Assert.NotEqual(transientInstA, transientInstB); // Transient must differ
 			Assert.Equal(singletonInstA, singletonInstB); // Singleton must be same
+
+			// Test registration of concrete types.
+			// Concrete should not be present if it hasn't been turned on with builder.RegisterAllImplementations(true)
+
+			// MyImplementingService should not be there
+			var shouldBeMissing = provider.GetService<MyImplementingService>();
+			Assert.Null(shouldBeMissing);
 		}
 
 		[Fact]
@@ -82,7 +89,7 @@ namespace Firefly.DependencyInjection.Tests
 		public void TestBadInput()
 		{
 			var sc = new ServiceCollection();
-			
+
 			// Missing implementation of PickSingleImplementation
 			Assert.ThrowsAny<RegistrationBuilderException>(() =>
 				sc.AddFireflyServiceRegistration(builder =>
@@ -93,7 +100,7 @@ namespace Firefly.DependencyInjection.Tests
 						;
 				})
 			);
-			
+
 			// Multiple "PickSingleImplementation" for same interface
 			Assert.ThrowsAny<RegistrationBuilderException>(() =>
 				sc.AddFireflyServiceRegistration(builder =>
@@ -105,8 +112,6 @@ namespace Firefly.DependencyInjection.Tests
 						;
 				})
 			);
-			
-			
 		}
 
 		[Fact]
@@ -128,8 +133,44 @@ namespace Firefly.DependencyInjection.Tests
 			Assert.Equal(var2, var3);
 		}
 
+		[Fact]
+		public void TestConcreteRegistration()
+		{
+			var sc = new ServiceCollection();
+			sc.AddFireflyServiceRegistration(builder =>
+			{
+				builder
+					.UseAssembly("Firefly.DependencyInjection.Tests")
+					.RegisterAllImplementations();
+			});
+			var provider = sc.BuildServiceProvider();
+			// Both interfaces and concrete types should be available now
 
-		private void TestBasicRegistration(ServiceProvider provider)
+			var ifaceImpl = provider.GetService<IMyService>();
+			var concrete = provider.GetService<MyImplementingService>();
+
+			Assert.NotNull(ifaceImpl);
+			Assert.NotNull(concrete);
+			Assert.IsType<MyImplementingService>(ifaceImpl);
+			Assert.IsType<MyImplementingService>(concrete);
+			
+			// Let's try multiple concretes
+			var all = provider.GetServices<IMultipleServiceInterface>();
+			var one = provider.GetService<MultipleInstanceClass1>();
+			var two = provider.GetService<MultipleInstanceClass2>();
+			var three = provider.GetService<MultipleInstanceClass3>();
+			Assert.NotNull(all);
+			Assert.NotNull(two);
+			Assert.NotNull(one);
+			Assert.NotNull(three);
+			
+			Assert.Equal(3, all.Count());
+			Assert.IsType<MultipleInstanceClass1>(one);
+			Assert.IsType<MultipleInstanceClass2>(two);
+			Assert.IsType<MultipleInstanceClass3>(three);
+		}
+
+		private void AssertBasicRegistration(ServiceProvider provider)
 		{
 			var s1 = provider.GetService<MyService>();
 			var s1Singleton = provider.GetService<MyServiceSingleton>();

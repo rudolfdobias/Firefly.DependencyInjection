@@ -26,7 +26,7 @@ public class MyServiceConsumer(){
 
  - Simple and fast service registration with single attribute
  - All service lifetimes supported, of course
- - Binding interface to one or more implementations
+ - Binding interface to one or more implementations with option to expose concrete types as well
  - Select which assemblies will be scanned for auto-registration
  - Possibility to select a single i-face implementation of many based on your custom logic
 
@@ -124,6 +124,36 @@ public class Consumer
 }
 ```
 
+### Registering concrete types along with its interface
+
+By default, if a service is registered with an interface, the concrete implementation is not registered
+into the container. With `RegisterAllImplementations(true)`, not only the interface but even the derived type(s) will be registered.
+
+```csharp
+// Setup
+services.AddFireflyServiceRegistration(builder => {
+    builder.RegisterAllImplementations()    
+});
+
+// Declaration
+[RegisterScoped(Type = typeof(IMyService))]
+public class MyServiceImplementation : IMyService {}
+
+// Consumer
+[RegisterScoped]
+public class MyServiceConsumer(){
+    public MyServiceConsumer(IMyService ifaceImpl, MyServiceImplementation concreteImpl)
+    {
+        // Both dependencies are resolved
+        Asert.True(ifaceImpl.GetType() == concreteImpl.GetType());
+    }
+}
+```
+
+> [!NOTE]  
+> If the service lifetime is Transient, both object will have different instances.
+
+
 ### Picking single implementation of an interface from many
 
 There can be a situation where you need to choose an implementation at the runtime. 
@@ -174,7 +204,8 @@ public DiRegistrationBuilder PickSingleImplementation<TInterface, TConcrete>()
 ### Registering services from other Assemblies
 
 It's fully possible to include another assembly. All these assemblies will be scanned for `[Register*]` attributes.
-#### ⚠ Referencing an assembly is needed if you want to register services from another project in your solution.
+> [!IMPORTANT]  
+> Referencing an assembly is needed if you want to register services from another project in your solution.
 
 ```csharp
 services.AddFireflyServiceRegistration(builder => {

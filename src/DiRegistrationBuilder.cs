@@ -19,6 +19,11 @@ public class DiRegistrationBuilder
 	internal readonly Dictionary<Type, Type> Selections = new();
 	
 	/// <summary>
+	/// Internal holder
+	/// </summary>
+	internal bool RegisterConcreteTypes { get; private set; }
+	
+	/// <summary>
 	/// Registers all services from given assembly
 	/// </summary>
 	/// <param name="name"></param>
@@ -34,6 +39,18 @@ public class DiRegistrationBuilder
 	public DiRegistrationBuilder UseAssembly(Assembly assembly)
 	{
 		Assemblies.Add(assembly);
+		return this;
+	}
+
+	/// <summary>
+	/// Normally, if a service is registered with an interface, the concrete implementation is not registered
+	/// to the DI. With RegisterAllImplementations(true), not only the interface but even the derived type(s) will be registered. 
+	/// </summary>
+	/// <param name="register"></param>
+	/// <returns></returns>
+	public DiRegistrationBuilder RegisterAllImplementations(bool register = true)
+	{
+		RegisterConcreteTypes = register;
 		return this;
 	}
 
