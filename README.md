@@ -49,26 +49,26 @@ Install-Package Firefly.DependencyInjection
 
 ## Basic Setup
 
-During application startup, find a `IServiceCollection` instance and call `SetupFireflyServiceRegistration()`.
+During application startup, find a `IServiceCollection` instance and call `AddFireflyServiceRegistration()`.
 
 The location depends on your [Hosting Model](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0):
 
 #### WebApplicationBuilder
 ```cs
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.SetupFireflyServiceRegistration();
+builder.Services.AddFireflyServiceRegistration();
 ```
 #### Older Startup.cs
 ```csharp
 public virtual void ConfigureServices(IServiceCollection services)
 {
-    services.SetupFireflyServiceRegistration();
+    services.AddFireflyServiceRegistration();
 }
 ```
 #### Manually created ServiceCollction 
 ```csharp
 var sc = new ServiceCollection()
-sc.SetupFireflyServiceRegistration();
+sc.AddFireflyServiceRegistration();
 ```
 ---
 
@@ -144,7 +144,7 @@ Application startup:
 ```csharp
 var useLocalFiles = true;
 
-services.SetupFireflyServiceRegistration(builder => {
+services.AddFireflyServiceRegistration(builder => {
     if (useLocalFiles)
         builder.PickSingleImplementation<IFileProvider>(typeof(LocalFileProvider));
     else
@@ -177,7 +177,7 @@ It's fully possible to include another assembly. All these assemblies will be sc
 #### ⚠ Referencing an assembly is needed if you want to register services from another project in your solution.
 
 ```csharp
-services.SetupFireflyServiceRegistration(builder => {
+services.AddFireflyServiceRegistration(builder => {
     builder.UseAssembly("Example.Assembly.Name"); // Locate assembly by string
     builder.UseAssembly(Assembly.GetEntryAssembly()); // Specify assembly by the Assembly type and pass anything you need.
 });

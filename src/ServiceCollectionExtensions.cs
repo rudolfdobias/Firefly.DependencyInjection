@@ -7,10 +7,10 @@ namespace Firefly.DependencyInjection
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static void SetupFireflyServiceRegistration(this IServiceCollection me)
-			=> SetupFireflyServiceRegistration(me, _ => { });
+		public static void AddFireflyServiceRegistration(this IServiceCollection me)
+			=> AddFireflyServiceRegistration(me, _ => { });
 
-		public static void SetupFireflyServiceRegistration(this IServiceCollection me,
+		public static void AddFireflyServiceRegistration(this IServiceCollection me,
 			Action<DiRegistrationBuilder> builder)
 		{
 			try
