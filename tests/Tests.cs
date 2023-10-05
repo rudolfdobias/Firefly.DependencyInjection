@@ -13,14 +13,14 @@ namespace Firefly.DependencyInjection.Tests
 			// is not "Firefly.DependencyInjection.Tests" but some internal IDE test runner namespace.
 
 			// var sc = new ServiceCollection();
-			// sc.SetupFireflyServiceRegistration();
+			// sc.AddFireflyServiceRegistration();
 		}
 
 		[Fact]
 		public void TestAssemblyLoad()
 		{
 			var sc = new ServiceCollection();
-			sc.SetupFireflyServiceRegistration(builder =>
+			sc.AddFireflyServiceRegistration(builder =>
 			{
 				builder.UseAssembly("Firefly.DependencyInjection.Tests");
 				Assert.NotEmpty(builder.GetUsedAssemblies());
@@ -63,7 +63,7 @@ namespace Firefly.DependencyInjection.Tests
 		public void TestSingleAndMultiInstance()
 		{
 			var sc = new ServiceCollection();
-			sc.SetupFireflyServiceRegistration(builder =>
+			sc.AddFireflyServiceRegistration(builder =>
 			{
 				builder
 					.UseAssembly("Firefly.DependencyInjection.Tests")
@@ -85,7 +85,7 @@ namespace Firefly.DependencyInjection.Tests
 			
 			// Missing implementation of PickSingleImplementation
 			Assert.ThrowsAny<RegistrationBuilderException>(() =>
-				sc.SetupFireflyServiceRegistration(builder =>
+				sc.AddFireflyServiceRegistration(builder =>
 				{
 					builder
 						.UseAssembly("Firefly.DependencyInjection.Tests")
@@ -96,7 +96,7 @@ namespace Firefly.DependencyInjection.Tests
 			
 			// Multiple "PickSingleImplementation" for same interface
 			Assert.ThrowsAny<RegistrationBuilderException>(() =>
-				sc.SetupFireflyServiceRegistration(builder =>
+				sc.AddFireflyServiceRegistration(builder =>
 				{
 					builder
 						.UseAssembly("Firefly.DependencyInjection.Tests")

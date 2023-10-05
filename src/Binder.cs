@@ -43,7 +43,7 @@ internal class Binder
 		{
 			if (false == RegistrationEntries.Any(x => x.ObjectType == concreteType && x.OuterType == interfaceType))
 				throw new ArgumentException($"No implementation of {concreteType} : {interfaceType} has been found.\n" +
-				                            $" This binding had been declared by `PickSingleImplementation` method in SetupFireflyServiceRegistration.\n" +
+				                            $" This binding had been declared by `PickSingleImplementation` method in AddFireflyServiceRegistration.\n" +
 				                            $" Note that the {interfaceType} must be set as Type parameter in the attribute, ie.:\n" +
 				                            $" [RegisterScoped(Type = typeof({interfaceType.Name})]");
 		}
